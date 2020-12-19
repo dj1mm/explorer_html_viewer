@@ -1,9 +1,13 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
 import logo from './logo.svg';
+import Tree from './Tree';
 import './App.css';
 
 function App() {
+
+  let treeRef = React.createRef<Tree>();
+
   return (
     <div className="App">
       <header className="App-header">
@@ -35,6 +39,9 @@ function App() {
             </section>
           )}
         </Dropzone>
+        <Tree
+            ref={treeRef}
+        />
         <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
           Learn React
         </a>
