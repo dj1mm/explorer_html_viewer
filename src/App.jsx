@@ -2,9 +2,15 @@ import React, { PureComponent } from 'react';
 import Tree from './Tree';
 import Preview from './Preview';
 import debounce from 'lodash.debounce';
+import { generate, convertExplorerModelToTree } from './tree-generator';
+import { Button, Modal } from 'react-bootstrap'
+import Dropzone from 'react-dropzone'
 
 class App extends PureComponent {
     state = {
+        show: false,
+        models: {},
+        data: generate(1),
         node: null,
         filterText: '',
         caseSensitive: false,
@@ -64,11 +70,55 @@ class App extends PureComponent {
     render() {
         return (
             <div className="container-fluid">
+            <Modal show={this.state.show} onHide={() => this.setState({ show: false })}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Upload JSON</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                <Dropzone onDrop={(acceptedFiles) => { acceptedFiles.forEach((file) => {
+                    const reader = new FileReader()
+
+                    reader.onabort = () => console.log('file reading was aborted')
+                    reader.onerror = () => console.log('file reading has failed')
+                    reader.onload = () => {
+                        let models = JSON.parse(reader.result);
+                        this.setState({show: false})
+                        this.setState({ models: models })
+                        this.setState({ data: generate(1001)})
+
+                        const { tree } = this.treeRef.current;
+                        tree.scrollTop(0);
+                        let node = tree.getNodeById('root');
+                        console.log(tree, node)
+                        if (node != null)
+                        {
+                            tree.removeNode(node)
+                        }
+                        tree.appendChildNode(convertExplorerModelToTree(models))
+                    }
+                    reader.readAsText(file);
+                    })
+                }}>
+                {({getRootProps, getInputProps}) => (
+                    <section>
+                    <div {...getRootProps()}>
+                        <input {...getInputProps()} />
+                        <p>Drag 'n' drop some files here, or click to select files</p>
+                    </div>
+                    </section>
+                )}
+                </Dropzone>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => this.setState({ show: false })}>Close</Button>
+                </Modal.Footer>
+            </Modal>
             <div className="row">
-            <div className="col w-50">
+            <div className="col">
                 <div className="row">
-                    <div className="col w-100">
-                        <h4>Filter</h4>
+                <div className="col">
+                    <div className="form-group">
+                        <label htmlFor="text-filter">Filter</label>
                         <input
                             ref={node => {
                                 this.textFilter = node;
@@ -95,65 +145,18 @@ class App extends PureComponent {
                         />
                     </div>
                 </div>
+                </div>
                 <div className="row">
-                    <div className="col-6">
-                        <div className="form-check">
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    className="form-check-input"
-                                    name="case-sensitive"
-                                    checked={this.state.caseSensitive}
-                                    onChange={this.changeCheckedState('caseSensitive')}
-                                />
-                                Case-sensitive
-                            </label>
-                        </div>
-                    </div>
-                    <div className="col-6">
-                        <div className="form-check">
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    className="form-check-input"
-                                    name="exact-match"
-                                    checked={this.state.exactMatch}
-                                    onChange={this.changeCheckedState('exactMatch')}
-                                />
-                                Exact match
-                            </label>
-                        </div>
-                    </div>
-                    <div className="col-6">
-                        <div className="form-check">
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    className="form-check-input"
-                                    name="include-ancestors"
-                                    checked={this.state.includeAncestors}
-                                    onChange={this.changeCheckedState('includeAncestors')}
-                                />
-                                Include ancestors
-                            </label>
-                        </div>
-                    </div>
-                    <div className="col-6">
-                    <div className="form-check">
-                        <label>
-                            <input
-                                type="checkbox"
-                                className="form-check-input"
-                                name="include-descendants"
-                                checked={this.state.includeDescendants}
-                                onChange={this.changeCheckedState('includeDescendants')}
-                            />
-                            Include descendants
-                        </label>
+                <div className="col">
+                    <div className="form-group">
+                    <Button variant="primary" onClick={() => this.setState({ show: true })}>
+                        Upload
+                    </Button>
                     </div>
                 </div>
                 </div>
                 <Tree
+                    data={this.state.data}
                     ref={this.treeRef}
                     onUpdate={this.onUpdate}
                 />

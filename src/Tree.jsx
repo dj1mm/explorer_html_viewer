@@ -9,7 +9,6 @@ import Clickable from './components/Clickable';
 import Text from './components/Text';
 import Label from './components/Label';
 import Loading from './components/Loading';
-import { generate } from './tree-generator';
 
 const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
     <TreeNode
@@ -58,13 +57,13 @@ const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
 
 class Tree extends Component {
     static propTypes = {
-        onUpdate: PropTypes.func
+        onUpdate: PropTypes.func,
+        data: PropTypes.array
     };
 
     treeRef = React.createRef();
     tree = null;
 
-    data = generate(1000);
 
     componentDidMount() {
         const { tree } = this.treeRef.current;
@@ -74,7 +73,7 @@ class Tree extends Component {
     }
 
     render() {
-        const { onUpdate } = this.props;
+        const { onUpdate, data } = this.props;
 
         if (this.treeRef.current) {
             this.tree = this.treeRef.current.tree;
@@ -89,7 +88,7 @@ class Tree extends Component {
                 autoOpen
                 selectable
                 tabIndex={0}
-                data={this.data}
+                data={data}
                 width="100%"
                 height={400}
                 rowHeight={30}
