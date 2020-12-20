@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import Tree from './Tree';
 import Preview from './Preview';
 import debounce from 'lodash.debounce';
-import { generate, convertExplorerModelToTree } from './tree-generator';
+import { convertExplorerModelToTree } from './tree-generator';
 import { Button, Modal } from 'react-bootstrap'
 import Dropzone from 'react-dropzone'
 
@@ -10,7 +10,7 @@ class App extends PureComponent {
     state = {
         show: false,
         models: {},
-        data: generate(1),
+        data: [],
         node: null,
         filterText: '',
         caseSensitive: false,
@@ -84,7 +84,7 @@ class App extends PureComponent {
                         let models = JSON.parse(reader.result);
                         this.setState({show: false})
                         this.setState({ models: models })
-                        this.setState({ data: generate(1001)})
+                        this.setState({ data: []})
 
                         const { tree } = this.treeRef.current;
                         tree.scrollTop(0);

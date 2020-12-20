@@ -1,26 +1,21 @@
-export const generate = (size = 1000) => {
-    const data = [];
-    const source = '{"id":"<root>","name":"<root>","props":{"droppable":true},"children":[{"id":"alpha","name":"Alpha","props":{"droppable":true}},{"id":"bravo","name":"Bravo","props":{"droppable":true},"children":[{"id":"charlie","name":"Charlie","props":{"droppable":true},"children":[{"id":"delta","name":"Delta","props":{"droppable":true},"children":[{"id":"echo","name":"Echo","props":{"droppable":true}},{"id":"foxtrot","name":"Foxtrot","props":{"droppable":true}}]},{"id":"golf","name":"Golf","props":{"droppable":true}}]},{"id":"hotel","name":"Hotel","props":{"droppable":true},"children":[{"id":"india","name":"India","props":{"droppable":true},"children":[{"id":"juliet","name":"Juliet","props":{"droppable":true}}]}]},{"id":"kilo","name":"Kilo","loadOnDemand":true,"props":{"droppable":true}}]}]}';
-    for (let i = 0; i < size; ++i) {
-        // data.push(JSON.parse(source.replace(/"(id|name)":"([^"]*)"/g, '"$1": "$2.' + i + '"')));
-    }
-    return data;
-};
 
 export const convertExplorerModelToTree = (model, index = null) => {
     if (index == null) {
-        let boards = [];
-        console.log(model.models[model.root].boards)
-        model.models[model.root].boards.forEach(element => {
-            boards.push(convertExplorerModelToTree(model, element));
-        });
-        return {'id': 'root', 'name': 'asd', children: [
-            {'id': 'root-boards', 'name': 'Boards', children: boards}
-        ]};
+        return convertExplorerModelToTree(model, model.root);
     }
 
     const m = model.models[index];
-    if (m.kind == "board") {
+    if (m.kind === "system") {
+        let boards = [];
+        model.models[model.root].boards.forEach(element => {
+            boards.push(convertExplorerModelToTree(model, element));
+        });
+        return {'id': 'root', 'name': m.name, children: [
+            {'id': 'root-boards', 'name': 'Boards', children: boards}
+        ]};
+    }
+    
+    if (m.kind === "board") {
         let components = [];
         m.components.forEach(element => {
             components.push(convertExplorerModelToTree(model, element));
@@ -45,19 +40,19 @@ export const convertExplorerModelToTree = (model, index = null) => {
         ]};
     }
 
-    if (m.kind == "interface") {
+    if (m.kind === "interface") {
         return {'id': m.id, 'name': m.name, 'children':[]};
     }
 
-    if (m.kind == "part") {
+    if (m.kind === "part") {
         return {'id': m.id, 'name': m.name, 'children':[]};
     }
 
-    if (m.kind == "component") {
+    if (m.kind === "component") {
         return {'id': m.id, 'name': m.refdes, 'children':[]};
     }
 
-    if (m.kind == "signal") {
+    if (m.kind === "signal") {
         return {'id': m.id, 'name': m.name, 'children':[]};
     }
 
