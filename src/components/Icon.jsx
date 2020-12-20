@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Icon = ( state: 'opened'|'closed', props: any[] ) => (
+const Icon = ({ state, ...props }) => (
     <span {...props}>
     {{
         'opened': (<i className="fa fa-fw fa-folder-open-o" />),

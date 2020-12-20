@@ -1,3 +1,4 @@
+import Checkbox from '@trendmicro/react-checkbox';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import InfiniteTree from 'react-infinite-tree';
@@ -28,6 +29,17 @@ const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
                 } else if (toggleState === 'opened') {
                     tree.closeNode(node);
                 }
+            }}
+        />
+        <Checkbox
+            checked={node.state.checked}
+            indeterminate={node.state.indeterminate}
+            onClick={(event) => {
+                event.stopPropagation();
+            }}
+            onChange={(event) => {
+                tree.checkNode(node);
+                onUpdate(node);
             }}
         />
         <Clickable>

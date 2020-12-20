@@ -1,3 +1,7 @@
+import '@trendmicro/react-buttons/dist/react-buttons.css';
+import '@trendmicro/react-checkbox/dist/react-checkbox.css';
+import '@trendmicro/react-dropdown/dist/react-dropdown.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -8,7 +12,7 @@ ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('container')
 );
 
 // If you want to start measuring performance in your app, pass a function
