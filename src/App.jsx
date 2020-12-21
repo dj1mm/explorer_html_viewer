@@ -34,7 +34,18 @@ class App extends PureComponent {
     };
 
     onUpdate = (node) => {
-        this.setState({ node: node });
+        let m = null;
+        if (node == null) {
+            return;
+        }
+        if (node.id === 'root') {
+            m = this.state.models.models[this.state.models.root];
+        } else {
+            m = this.state.models.models[node.id];
+        }
+
+        if (m === undefined) return;
+        this.setState({ node: m });
     };
 
     filter = (keyword) => {
@@ -162,7 +173,7 @@ class App extends PureComponent {
                 />
             </div>
             <div className="col w-50">
-                <Preview node={this.state.node} />
+                <Preview node={this.state.node} models={this.state.models} />
             </div>
             </div>
             </div>

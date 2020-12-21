@@ -32,7 +32,7 @@ export const convertExplorerModelToTree = (model, index = null) => {
         m.parts.forEach(element => {
             parts.push(convertExplorerModelToTree(model, element));
         });
-        return {'id': m.id, 'name': m.name, 'children':[
+        return {'id': m.id, 'name': m.refdes, 'children':[
             {'id': m.id + '-components', 'name': 'Components', children: components},
             {'id': m.id + '-signals', 'name': 'Signals', children: signals},
             {'id': m.id + '-interfaces', 'name': 'Interfaces', children: interfaces},
