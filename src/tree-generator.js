@@ -11,7 +11,7 @@ export const convertExplorerModelToTree = (model, index = null) => {
             boards.push(convertExplorerModelToTree(model, element));
         });
         return {'id': 'root', 'name': m.name, children: [
-            {'id': 'root-boards', 'name': 'Boards', children: boards}
+            {'id': 'root-boards', 'name': `Boards (${boards.length})`, children: boards}
         ]};
     }
     
@@ -33,10 +33,10 @@ export const convertExplorerModelToTree = (model, index = null) => {
             parts.push(convertExplorerModelToTree(model, element));
         });
         return {'id': m.id, 'name': m.refdes, 'children':[
-            {'id': m.id + '-components', 'name': 'Components', children: components},
-            {'id': m.id + '-signals', 'name': 'Signals', children: signals},
-            {'id': m.id + '-interfaces', 'name': 'Interfaces', children: interfaces},
-            {'id': m.id + '-parts', 'name': 'Parts', children: parts},
+            {'id': m.id + '-components', 'name': `Components (${components.length})`, children: components},
+            {'id': m.id + '-signals', 'name': `Signals (${signals.length})`, children: signals},
+            {'id': m.id + '-interfaces', 'name': `Interfaces (${interfaces.length})`, children: interfaces},
+            {'id': m.id + '-parts', 'name': `Parts (${parts.length})`, children: parts},
         ]};
     }
 

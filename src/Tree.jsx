@@ -7,8 +7,6 @@ import Toggler from './components/Toggler';
 import Icon from './components/Icon';
 import Clickable from './components/Clickable';
 import Text from './components/Text';
-import Label from './components/Label';
-import Loading from './components/Loading';
 
 const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
     <TreeNode
@@ -45,13 +43,6 @@ const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
             <Icon state={toggleState} />
             <Text>{node.name}</Text>
         </Clickable>
-        {(node.loadOnDemand && node.children.length === 0 && !node.state.loading) &&
-            <i className="fa fa-fw fa-ellipsis-v" />
-        }
-        {node.state.loading && <Loading />}
-        <Label style={{ position: 'absolute', right: 5, top: 6 }}>
-            {node.children.length}
-        </Label>
     </TreeNode>
 );
 
