@@ -4,7 +4,6 @@ import { Tab, Button, Tabs, Form, Row, Col, Table } from 'react-bootstrap'
 
 function ComponentPreview ({ node, models }) {
     const [key, setKey] = useState('summary');
-    const [identifier, setIdentifier] = useState('unidentified');
     const [name, setName] = useState('unnamed');
     const [board, setBoard] = useState(undefined);
     const [pins, setPins] = useState([]);
@@ -13,7 +12,6 @@ function ComponentPreview ({ node, models }) {
         // check model corresponding to node is a board. If so, do these
         if (node.kind !== 'component') return;
 
-        setIdentifier(node.identifier);
         setName(node.refdes);
         setBoard(models.models[node.parent]);
 
@@ -36,12 +34,6 @@ function ComponentPreview ({ node, models }) {
                     <Form.Label column sm="2">Name</Form.Label>
                     <Col sm="10">
                         <Form.Control disabled value={name} />
-                    </Col>
-                </Form.Group>
-                <Form.Group as={Row} controlId="component-identifier">
-                    <Form.Label column sm="2">Identifier</Form.Label>
-                    <Col sm="10">
-                        <Form.Control disabled value={identifier} />
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="component-parent">

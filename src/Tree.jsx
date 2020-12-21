@@ -28,6 +28,7 @@ const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
                 }
             }}
         />
+        { (node.kind === undefined || node.kind !== 'misc') &&
         <Checkbox
             checked={node.state.checked}
             indeterminate={node.state.indeterminate}
@@ -39,9 +40,10 @@ const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
                 onUpdate(node.id);
             }}
         />
+        }
         <Clickable>
-            <Icon state={toggleState} />
-            <Text>{node.name}</Text>
+            <Icon state={node.kind} />
+            <Text> {node.name}</Text>
         </Clickable>
     </TreeNode>
 );

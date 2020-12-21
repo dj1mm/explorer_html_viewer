@@ -10,8 +10,8 @@ export const convertExplorerModelToTree = (model, index = null) => {
         model.models[model.root].boards.forEach(element => {
             boards.push(convertExplorerModelToTree(model, element));
         });
-        return {'id': 'root', 'name': m.name, children: [
-            {'id': 'root-boards', 'name': `Boards (${boards.length})`, children: boards}
+        return {'id': 'root', 'kind': 'system', 'name': m.name, children: [
+            {'id': 'root-boards', 'kind': 'misc', 'name': `Boards (${boards.length})`, children: boards}
         ]};
     }
     
@@ -32,28 +32,28 @@ export const convertExplorerModelToTree = (model, index = null) => {
         m.parts.forEach(element => {
             parts.push(convertExplorerModelToTree(model, element));
         });
-        return {'id': m.id, 'name': m.refdes, 'children':[
-            {'id': m.id + '-components', 'name': `Components (${components.length})`, children: components},
-            {'id': m.id + '-signals', 'name': `Signals (${signals.length})`, children: signals},
-            {'id': m.id + '-interfaces', 'name': `Interfaces (${interfaces.length})`, children: interfaces},
-            {'id': m.id + '-parts', 'name': `Parts (${parts.length})`, children: parts},
+        return {'id': m.id, 'kind': 'board', 'name': m.refdes, 'children':[
+            {'id': m.id + '-components', 'kind': 'misc', 'name': `Components (${components.length})`, children: components},
+            {'id': m.id + '-signals', 'kind': 'misc', 'name': `Signals (${signals.length})`, children: signals},
+            {'id': m.id + '-interfaces', 'kind': 'misc', 'name': `Interfaces (${interfaces.length})`, children: interfaces},
+            {'id': m.id + '-parts', 'kind': 'misc', 'name': `Parts (${parts.length})`, children: parts},
         ]};
     }
 
     if (m.kind === "interface") {
-        return {'id': m.id, 'name': m.name, 'children':[]};
+        return {'id': m.id, 'kind': 'interface', 'name': m.name, 'children':[]};
     }
 
     if (m.kind === "part") {
-        return {'id': m.id, 'name': m.name, 'children':[]};
+        return {'id': m.id, 'kind': 'part', 'name': m.name, 'children':[]};
     }
 
     if (m.kind === "component") {
-        return {'id': m.id, 'name': m.refdes, 'children':[]};
+        return {'id': m.id, 'kind': 'component', 'name': m.refdes, 'children':[]};
     }
 
     if (m.kind === "signal") {
-        return {'id': m.id, 'name': m.name, 'children':[]};
+        return {'id': m.id, 'kind': 'signal', 'name': m.name, 'children':[]};
     }
 
     return []

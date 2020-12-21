@@ -3,7 +3,7 @@ import Tree from './Tree';
 import Preview from './Preview';
 import debounce from 'lodash.debounce';
 import { convertExplorerModelToTree } from './tree-generator';
-import { Button, Modal } from 'react-bootstrap'
+import { Button, Modal, Row, Col } from 'react-bootstrap'
 import Dropzone from 'react-dropzone'
 
 class App extends PureComponent {
@@ -123,10 +123,10 @@ class App extends PureComponent {
                     <Button variant="primary" onClick={() => this.setState({ show: false })}>Close</Button>
                 </Modal.Footer>
             </Modal>
-            <div className="row">
-            <div className="col">
-                <div className="row">
-                <div className="col">
+            <Row>
+            <Col>
+                <Row>
+                <Col>
                     <div className="form-group">
                         <label htmlFor="text-filter">Filter</label>
                         <input
@@ -154,27 +154,27 @@ class App extends PureComponent {
                             }, 250)}
                         />
                     </div>
-                </div>
-                </div>
-                <div className="row">
-                <div className="col">
+                </Col>
+                </Row>
+                <Row>
+                <Col>
                     <div className="form-group">
                     <Button variant="primary" onClick={() => this.setState({ show: true })}>
                         Upload
                     </Button>
                     </div>
-                </div>
-                </div>
+                </Col>
+                </Row>
                 <Tree
                     data={this.state.data}
                     ref={this.treeRef}
                     onUpdate={this.onUpdate}
                 />
-            </div>
-            <div className="col w-50">
+            </Col>
+            <Col md="7">
                 <Preview node={this.state.node} models={this.state.models} onUpdate={this.onUpdate} />
-            </div>
-            </div>
+            </Col>
+            </Row>
             </div>
         );
     }
