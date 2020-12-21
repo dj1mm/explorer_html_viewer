@@ -38,10 +38,10 @@ class App extends PureComponent {
         if (node == null) {
             return;
         }
-        if (node.id === 'root') {
+        if (node === 'root') {
             m = this.state.models.models[this.state.models.root];
         } else {
-            m = this.state.models.models[node.id];
+            m = this.state.models.models[node];
         }
 
         if (m === undefined) return;
@@ -100,7 +100,6 @@ class App extends PureComponent {
                         const { tree } = this.treeRef.current;
                         tree.scrollTop(0);
                         let node = tree.getNodeById('root');
-                        console.log(tree, node)
                         if (node != null)
                         {
                             tree.removeNode(node)
@@ -173,7 +172,7 @@ class App extends PureComponent {
                 />
             </div>
             <div className="col w-50">
-                <Preview node={this.state.node} models={this.state.models} />
+                <Preview node={this.state.node} models={this.state.models} onUpdate={this.onUpdate} />
             </div>
             </div>
             </div>

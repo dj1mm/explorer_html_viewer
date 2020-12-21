@@ -38,7 +38,7 @@ const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
             }}
             onChange={(event) => {
                 tree.checkNode(node);
-                onUpdate(node);
+                onUpdate(node.id);
             }}
         />
         <Clickable>
@@ -157,7 +157,8 @@ class Tree extends Component {
                     const { tree } = this.treeRef.current;
 
                     console.log('onContentDidUpdate');
-                    onUpdate(tree.getSelectedNode());
+                    const node = tree.getSelectedNode();
+                    onUpdate(node == null? node: node.id);
                 }}
                 onOpenNode={(node) => {
                     console.log('onOpenNode:', node);
@@ -167,7 +168,7 @@ class Tree extends Component {
                 }}
                 onSelectNode={(node) => {
                     console.log('onSelectNode:', node);
-                    onUpdate(node);
+                    onUpdate(node.id);
                 }}
                 onWillOpenNode={(node) => {
                     console.log('onWillOpenNode:', node);

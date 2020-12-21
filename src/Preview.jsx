@@ -2,22 +2,10 @@ import React from 'react';
 import { Tab, Tabs, Form, Row, Col, Button } from 'react-bootstrap'
 
 const Preview = (props) => {
-    const { node, models } = props;
+    const { node, models, onUpdate } = props;
 
     if (!node) {
         return null;
-    }
-
-    const o = {
-        id: node.id,
-        name: node.name,
-        children: node.children ? node.children.length : 0,
-        parent: node.parent ? node.parent.id : null,
-        state: node.state
-    };
-
-    if (node.loadOnDemand !== undefined) {
-        o.loadOnDemand = node.loadOnDemand;
     }
 
     if (node.kind === 'system') {
@@ -74,7 +62,7 @@ const Preview = (props) => {
                     <Form.Group as={Row} controlId="signal-parent">
                         <Form.Label column sm="2">Parent</Form.Label>
                         <Col sm="10">
-                            <Button>Board {models.models[node.parent].refdes}</Button>
+                            <Button onClick={() => onUpdate(node.parent)}>Board {models.models[node.parent].refdes}</Button>
                         </Col>
                     </Form.Group>
                 </Form>
@@ -97,7 +85,7 @@ const Preview = (props) => {
                     <Form.Group as={Row} controlId="component-parent">
                         <Form.Label column sm="2">Parent</Form.Label>
                         <Col sm="10">
-                            <Button>Board {models.models[node.parent].refdes}</Button>
+                        <Button onClick={() => onUpdate(node.parent)}>Board {models.models[node.parent].refdes}</Button>
                         </Col>
                     </Form.Group>
                 </Form>
@@ -126,7 +114,7 @@ const Preview = (props) => {
                     <Form.Group as={Row} controlId="part-parent">
                         <Form.Label column sm="2">Parent</Form.Label>
                         <Col sm="10">
-                            <Button>Board {node.parent}</Button>
+                        <Button onClick={() => onUpdate(node.parent)}>Board {models.models[node.parent].refdes}</Button>
                         </Col>
                     </Form.Group>
                 </Form>
@@ -149,13 +137,13 @@ const Preview = (props) => {
                     <Form.Group as={Row} controlId="interface-parent">
                         <Form.Label column sm="2">Parent</Form.Label>
                         <Col sm="10">
-                            <Button>Board {models.models[node.parent].refdes}</Button>
+                        <Button onClick={() => onUpdate(node.parent)}>Board {models.models[node.parent].refdes}</Button>
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} controlId="interface-parent">
                         <Form.Label column sm="2">Other</Form.Label>
                         <Col sm="10">
-                            { node.other != null && <Button>Interface {models.models[node.other].name}</Button>}
+                            { node.other != null && <Button onClick={() => onUpdate(node.other)}>Interface {models.models[node.other].name}</Button>}
                         </Col>
                     </Form.Group>
                 </Form>
