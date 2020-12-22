@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Button, Tabs, Form, Row, Col, Table } from 'react-bootstrap'
 
-function ComponentPreview ({ node, models }) {
+function ComponentPreview ({ node, models, onUpdate }) {
     const [key, setKey] = useState('summary');
     const [name, setName] = useState('unnamed');
     const [board, setBoard] = useState(undefined);
@@ -10,6 +10,7 @@ function ComponentPreview ({ node, models }) {
 
     useEffect(() => {
         // check model corresponding to node is a board. If so, do these
+        if (node === null) return;
         if (node.kind !== 'component') return;
 
         setName(node.refdes);
@@ -19,7 +20,6 @@ function ComponentPreview ({ node, models }) {
             const pin = models.models[id];
             const info = models.models[pin.pininfo];
             const sig = models.models[pin.signal];
-            console.log("dsadsadsa", pin, info, sig)
             return { id: sig.id, name: info.name, number: info.number, signal: sig.name };
         });
         setPins(newPins);
@@ -39,7 +39,7 @@ function ComponentPreview ({ node, models }) {
                 <Form.Group as={Row} controlId="component-parent">
                     <Form.Label column sm="2">Parent</Form.Label>
                     <Col sm="10">
-                        {board !== undefined && <Button>Board {board.refdes}</Button>}
+                        {board !== undefined && <Button onClick={() => onUpdate(board.id)}>Board {board.refdes}</Button>}
                     </Col>
                 </Form.Group>
             </Form>
@@ -58,7 +58,7 @@ function ComponentPreview ({ node, models }) {
             <tr>
             <td>{pin.name}</td>
             <td>{pin.number}</td>
-            <td>{pin.signal}</td>
+            <td><btn style={{padding:0}} class="btn btn-link" onClick={() => onUpdate(pin.id)}>{pin.signal}</btn></td>
             </tr>
         )}
         </tbody>

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Button, Tabs, Form, Row, Col, Table } from 'react-bootstrap'
 
-function PartPreview ({ node, models }) {
+function PartPreview ({ node, models, onUpdate }) {
     const [key, setKey] = useState('summary');
     const [identifier, setIdentifier] = useState('unidentified');
     const [name, setName] = useState('unnamed');
@@ -12,6 +12,7 @@ function PartPreview ({ node, models }) {
 
     useEffect(() => {
         // check model corresponding to node is a board. If so, do these
+        if (node === null) return;
         if (node.kind !== 'part') return;
 
         console.log(node)
@@ -52,7 +53,7 @@ function PartPreview ({ node, models }) {
                 <Form.Group as={Row} controlId="part-parent">
                     <Form.Label column sm="2">Parent</Form.Label>
                     <Col sm="10">
-                        {board !== undefined && <Button>Board {board.refdes}</Button>}
+                        {board !== undefined && <Button onClick={() => onUpdate(board.id)}>Board {board.refdes}</Button>}
                     </Col>
                 </Form.Group>
             </Form>
@@ -75,17 +76,17 @@ function PartPreview ({ node, models }) {
         </tbody>
         </Table>
         </Tab>
-        <Tab eventKey="components" title={"Components ("+ components.length +")"}>
+        <Tab eventKey="components" title={"Component Instancess ("+ components.length +")"}>
         <Table style={{paddingTop: 15}} responsive striped bordered hover>
         <thead>
             <tr>
-            <th>Component name</th>
+            <th>Component Name</th>
             </tr>
         </thead>
         <tbody>
         {components.map(component => 
             <tr>
-            <td>{component.name}</td>
+            <td><Button style={{padding:0}} variant="link" onClick={() => onUpdate(component.id)}>{component.name}</Button></td>
             </tr>
         )}
         </tbody>

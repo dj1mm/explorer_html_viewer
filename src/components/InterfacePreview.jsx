@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Button, Tabs, Form, Row, Col, Table } from 'react-bootstrap'
 
-function InterfacePreview ({ node, models }) {
+function InterfacePreview ({ node, models, onUpdate }) {
     const [key, setKey] = useState('summary');
     const [name, setName] = useState('unnamed');
     const [board, setBoard] = useState(undefined);
@@ -11,6 +11,7 @@ function InterfacePreview ({ node, models }) {
 
     useEffect(() => {
         // check model corresponding to node is a board. If so, do these
+        if (node === null) return;
         if (node.kind !== 'interface') return;
 
         setName(node.name);
@@ -33,22 +34,24 @@ function InterfacePreview ({ node, models }) {
             const othr_itf = models.models[node.other];
 
             if (othr_itf === undefined) {
-                return { index: i++,
-                        id: sig.id, signal: sig.name, component: com.refdes, number: info.number,
-                        othr_id: undefined, othr_signal: undefined, othr_component: undefined, othr_number: undefined };
+                return { index: i++, 
+                         signalId: sig.id,           signal: sig.name,
+                         componentId: com.id,        component: `${com.refdes}.${info.number}`,
+                         othrSignalId: undefined,    othr_signal: undefined,
+                         othrComponentId: undefined, othr_component: undefined};
             }
 
             const othr_pin = models.models[othr_itf.pins[i]];
-            console.log(othr_itf, othr_pin)
             const othr_info = models.models[othr_pin.pininfo];
             const othr_com = models.models[othr_pin.parent];
             const othr_sig = models.models[othr_pin.signal];
             const othr_brd = models.models[othr_com.parent];
-            console.log(othr_pin,othr_sig)
 
-            return { index: i++,
-                id:      sig.id,      signal:      sig.name,      component:      com.refdes,      number: info.number,
-                othr_id: othr_sig.id, othr_signal: othr_sig.name, othr_component: othr_com.refdes, othr_number: othr_info.number, othr_board: othr_brd.refdes };
+            return { index: i++, 
+                signalId: sig.id,             signal: sig.name,
+                componentId: com.id,          component: `${com.refdes}.${info.number}`,
+                othrSignalId: othr_sig.id,    othr_signal: `${othr_brd.refdes}.${othr_sig.name}`,
+                othrComponentId: othr_com.id, othr_component: `${othr_brd.refdes}.${com.refdes}.${othr_info.number}`};
 
         });
         setPins(newPins);
@@ -68,13 +71,13 @@ function InterfacePreview ({ node, models }) {
                 <Form.Group as={Row} controlId="interface-parent">
                     <Form.Label column sm="2">Parent</Form.Label>
                     <Col sm="10">
-                        {board !== undefined && <Button>Board {board.refdes}</Button>}
+                        {board !== undefined && <Button onClick={() => onUpdate(board.id)}>Board {board.refdes}</Button>}
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="interface-other">
                     <Form.Label column sm="2">Other</Form.Label>
                     <Col sm="10">
-                        {other !== undefined && <Button>Interface {other.board}.{other.name}</Button>}
+                        {other !== undefined && <Button onClick={() => onUpdate(other.id)}>Interface {other.board}.{other.name}</Button>}
                     </Col>
                 </Form.Group>
             </Form>
@@ -93,11 +96,11 @@ function InterfacePreview ({ node, models }) {
         <tbody>
         {pins.map(pin => 
             <tr>
-            <td>{pin.signal}</td>
-            <td>{pin.component}.{pin.number}</td>
+            <td><Button style={{ padding: 0}} onClick={() => onUpdate(pin.signalId)} variant="link">{pin.signal}</Button></td>
+            <td><Button style={{ padding: 0}} onClick={() => onUpdate(pin.componentId)} variant="link">{pin.component}</Button></td>
             <td>{pin.index}</td>
-            <td>{pin.othr_component !== undefined && pin.othr_board + '.' + pin.othr_component + '.' + pin.othr_number}</td>
-            <td>{pin.othr_signal !== undefined && pin.othr_signal}</td>
+            <td><Button style={{ padding: 0}} onClick={() => onUpdate(pin.othrSignalId)} variant="link">{pin.othr_component !== undefined && pin.othr_component}</Button></td>
+            <td><Button style={{ padding: 0}} onClick={() => onUpdate(pin.othrComponentId)} variant="link">{pin.othr_signal !== undefined && pin.othr_signal}</Button></td>
             </tr>
         )}
         </tbody>

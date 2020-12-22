@@ -5,6 +5,7 @@ import debounce from 'lodash.debounce';
 import { convertExplorerModelToTree } from './tree-generator';
 import { Button, Modal, Row, Col } from 'react-bootstrap'
 import Dropzone from 'react-dropzone'
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 class App extends PureComponent {
     state = {
@@ -80,7 +81,7 @@ class App extends PureComponent {
 
     render() {
         return (
-            <div className="container-fluid">
+            <>
             <Modal show={this.state.show} onHide={() => this.setState({ show: false })}>
                 <Modal.Header closeButton>
                     <Modal.Title>Upload JSON</Modal.Title>
@@ -96,6 +97,7 @@ class App extends PureComponent {
                         this.setState({show: false})
                         this.setState({ models: models })
                         this.setState({ data: []})
+                        this.setState({ node: null })
 
                         const { tree } = this.treeRef.current;
                         tree.scrollTop(0);
@@ -123,8 +125,8 @@ class App extends PureComponent {
                     <Button variant="primary" onClick={() => this.setState({ show: false })}>Close</Button>
                 </Modal.Footer>
             </Modal>
-            <Row>
-            <Col>
+            <Row className="flex-fill d-flex">
+            <Col className="d-flex flex-column">
                 <Row>
                 <Col>
                     <div className="form-group">
@@ -165,17 +167,26 @@ class App extends PureComponent {
                     </div>
                 </Col>
                 </Row>
-                <Tree
-                    data={this.state.data}
-                    ref={this.treeRef}
-                    onUpdate={this.onUpdate}
-                />
+                <Row className="flex-fill d-flex">
+                <Col>
+                <AutoSizer disableWidth>
+                {({height}) => (
+                    <Tree
+                        data={this.state.data}
+                        ref={this.treeRef}
+                        onUpdate={this.onUpdate}
+                        height={height<100?100:height>1000?1000:height}
+                    />
+                )}
+                </AutoSizer>
+                </Col>
+                </Row>
             </Col>
-            <Col md="7">
+            <Col xs="7">
                 <Preview node={this.state.node} models={this.state.models} onUpdate={this.onUpdate} />
             </Col>
             </Row>
-            </div>
+            </>
         );
     }
 }

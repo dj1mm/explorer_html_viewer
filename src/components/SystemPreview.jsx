@@ -2,16 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, Form, Row, Col, Table } from 'react-bootstrap'
 
-function SystemPreview ({ node, models }) {
+function SystemPreview ({ node, models, onUpdate }) {
     const [key, setKey] = useState('summary');
     const [name, setName] = useState('unnamed');
     const [boards, setBoards] = useState([]);
 
     useEffect(() => {
         // check model corresponding to node is a system. If so, do these
+        if (node === null) return;
         if (node.kind !== 'system') return;
         setName(node.name);
-        console.log(models['models'][node.boards[0]])
         let newBoards = node.boards.map(id => {
             const brd = models.models[id];
             return { id: brd.id, name: brd.name, refdes: brd.refdes,
@@ -50,7 +50,7 @@ function SystemPreview ({ node, models }) {
         <tbody>
         {boards.map(board => 
             <tr>
-            <td>{board.refdes}</td>
+            <td><btn style={{padding:0}} class="btn btn-link" onClick={() => onUpdate(board.id)}>{board.refdes}</btn></td>
             <td>{board.name}</td>
             <td>{board.components}</td>
             <td>{board.signals}</td>

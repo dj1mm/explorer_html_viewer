@@ -83,7 +83,7 @@ class Tree extends Component {
                 tabIndex={0}
                 data={data}
                 width="100%"
-                height={400}
+                height={this.props.height}
                 rowHeight={30}
                 shouldLoadNodes={(node) => {
                     return !node.hasChildren() && node.loadOnDemand;

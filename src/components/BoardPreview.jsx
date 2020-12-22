@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, Form, Row, Col, Table } from 'react-bootstrap'
 
-function SystemPreview ({ node, models }) {
+function SystemPreview ({ node, models, onUpdate }) {
     const [key, setKey] = useState('summary');
     const [name, setName] = useState('unnamed');
     const [refdes, setRefdes] = useState('unrefdes');
@@ -13,6 +13,7 @@ function SystemPreview ({ node, models }) {
 
     useEffect(() => {
         // check model corresponding to node is a board. If so, do these
+        if (node === null) return;
         if (node.kind !== 'board') return;
         setName(node.name);
         setRefdes(node.refdes);
@@ -71,7 +72,7 @@ function SystemPreview ({ node, models }) {
         <tbody>
         {interfaces.map(itf => 
             <tr>
-            <td>{itf.name}</td>
+            <td><btn style={{padding:0}} class="btn btn-link" onClick={() => onUpdate(itf.id)}>{itf.name}</btn></td>
             <td>{itf.pins}</td>
             </tr>
         )}
@@ -89,7 +90,7 @@ function SystemPreview ({ node, models }) {
         <tbody>
         {signals.map(sig => 
             <tr>
-            <td>{sig.name}</td>
+            <td><btn style={{padding:0}} class="btn btn-link" onClick={() => onUpdate(sig.id)}>{sig.name}</btn></td>
             <td>{sig.pins}</td>
             </tr>
         )}
@@ -105,10 +106,10 @@ function SystemPreview ({ node, models }) {
             </tr>
         </thead>
         <tbody>
-        {components.map(itf => 
+        {components.map(com => 
             <tr>
-            <td>{itf.refdes}</td>
-            <td>{itf.pins}</td>
+            <td><btn style={{padding:0}} class="btn btn-link" onClick={() => onUpdate(com.id)}>{com.refdes}</btn></td>
+            <td>{com.pins}</td>
             </tr>
         )}
         </tbody>
@@ -118,17 +119,17 @@ function SystemPreview ({ node, models }) {
         <Table style={{paddingTop: 15}} responsive striped bordered hover>
         <thead>
             <tr>
-            <th>Part</th>
             <th>Name</th>
+            <th>Part</th>
             <th>Pins</th>
             </tr>
         </thead>
         <tbody>
-        {parts.map(itf => 
+        {parts.map(prt => 
             <tr>
-            <td>{itf.name}</td>
-            <td>{itf.identifier}</td>
-            <td>{itf.pins}</td>
+            <td><btn style={{padding:0}} class="btn btn-link" onClick={() => onUpdate(prt.id)}>{prt.identifier}</btn></td>
+            <td>{prt.name}</td>
+            <td>{prt.pins}</td>
             </tr>
         )}
         </tbody>
