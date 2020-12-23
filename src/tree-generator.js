@@ -1,16 +1,16 @@
 
 export const convertExplorerModelToTree = (model, index = null) => {
     if (index == null) {
-        return convertExplorerModelToTree(model, model.root);
+        return convertExplorerModelToTree(model, model.models.root);
     }
 
     const m = model.models[index];
     if (m.kind === "system") {
         let boards = [];
-        model.models[model.root].boards.forEach(element => {
+        model.models[index].boards.forEach(element => {
             boards.push(convertExplorerModelToTree(model, element));
         });
-        return {'id': 'root', 'kind': 'system', 'name': m.name, children: [
+        return {'id': m.id, 'kind': 'system', 'name': m.name, children: [
             {'id': 'root-boards', 'kind': 'misc', 'name': `Boards (${boards.length})`, children: boards}
         ]};
     }

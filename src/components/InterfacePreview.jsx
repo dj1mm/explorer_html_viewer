@@ -1,37 +1,53 @@
 
 import React, { useState, useEffect } from 'react';
-import { Tab, Button, Tabs, Form, Row, Col, Table } from 'react-bootstrap'
+import { Tab, Tabs, Form, Row, Col, Table } from 'react-bootstrap'
+import {
+    useParams, Link
+} from "react-router-dom";
 
-function InterfacePreview ({ node, models, onUpdate }) {
+function InterfacePreview ({ models }) {
     const [key, setKey] = useState('summary');
     const [name, setName] = useState('unnamed');
     const [board, setBoard] = useState(undefined);
     const [other, setOther] = useState(undefined);
     const [pins, setPins] = useState([]);
+    const [status, setStatus] = useState('okayy');
+    
+    let { id } = useParams();
 
+    // listen for changes on the id. If id changes, we shall fetch data from
+    // the model and populate the fields for display
     useEffect(() => {
-        // check model corresponding to node is a board. If so, do these
-        if (node === null) return;
-        if (node.kind !== 'interface') return;
+        if (id === undefined) return;
+        let node = models[id];
+
+        if (node === undefined) {
+            setStatus('node-not-found')
+            return;
+        }
+        if (node.kind !== 'interface') {
+            setStatus('node-not-a-interface')
+            return;
+        }
 
         setName(node.name);
-        setBoard(models.models[node.parent]);
+        setBoard(models[node.parent]);
 
-        let othr = models.models[node.other];
+        let othr = models[node.other];
         if (othr === undefined) {
             setOther(undefined);
         } else {
-            setOther({ id: othr.id, name: othr.name, board: models.models[othr.parent].refdes });
+            setOther({ id: othr.id, name: othr.name, board: models[othr.parent].refdes });
         }
 
         let i = 0;
         let newPins = node.pins.map(id => {
-            const pin = models.models[id];
-            const info = models.models[pin.pininfo];
-            const com = models.models[pin.parent];
-            const sig = models.models[pin.signal];
+            const pin = models[id];
+            const info = models[pin.pininfo];
+            const com = models[pin.parent];
+            const sig = models[pin.signal];
 
-            const othr_itf = models.models[node.other];
+            const othr_itf = models[node.other];
 
             if (othr_itf === undefined) {
                 return { index: i++, 
@@ -41,11 +57,11 @@ function InterfacePreview ({ node, models, onUpdate }) {
                          othrComponentId: undefined, othr_component: undefined};
             }
 
-            const othr_pin = models.models[othr_itf.pins[i]];
-            const othr_info = models.models[othr_pin.pininfo];
-            const othr_com = models.models[othr_pin.parent];
-            const othr_sig = models.models[othr_pin.signal];
-            const othr_brd = models.models[othr_com.parent];
+            const othr_pin = models[othr_itf.pins[i]];
+            const othr_info = models[othr_pin.pininfo];
+            const othr_com = models[othr_pin.parent];
+            const othr_sig = models[othr_pin.signal];
+            const othr_brd = models[othr_com.parent];
 
             return { index: i++, 
                 signalId: sig.id,             signal: sig.name,
@@ -56,11 +72,15 @@ function InterfacePreview ({ node, models, onUpdate }) {
         });
         setPins(newPins);
 
-    }, [node, models]);
+    }, [id, models]);
+
+    if (status !== 'okayy') {
+        return <p className="alert alert-danger mt-4">{status}</p>
+    }
 
     return (
         <Tabs activeKey={key} onSelect={(k) => setKey(k)} id="interface-preview">
-        <Tab  eventKey="summary" title="Summary">
+        <Tab  eventKey="summary" title="Interface Summary">
             <Form style={{paddingTop: 15}}>
                 <Form.Group as={Row} controlId="interface-name">
                     <Form.Label column sm="2">Name</Form.Label>
@@ -71,13 +91,13 @@ function InterfacePreview ({ node, models, onUpdate }) {
                 <Form.Group as={Row} controlId="interface-parent">
                     <Form.Label column sm="2">Parent</Form.Label>
                     <Col sm="10">
-                        {board !== undefined && <Button onClick={() => onUpdate(board.id)}>Board {board.refdes}</Button>}
+                        {board !== undefined && <Link className="btn btn-link" to={`/board/${board.id}`}>Board {board.refdes}</Link>}
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="interface-other">
                     <Form.Label column sm="2">Other</Form.Label>
                     <Col sm="10">
-                        {other !== undefined && <Button onClick={() => onUpdate(other.id)}>Interface {other.board}.{other.name}</Button>}
+                        {other !== undefined && <Link className="btn btn-link" to={`/interface/${other.id}`}>Interface {other.board}.{other.name}</Link>}
                     </Col>
                 </Form.Group>
             </Form>
@@ -95,12 +115,12 @@ function InterfacePreview ({ node, models, onUpdate }) {
         </thead>
         <tbody>
         {pins.map(pin => 
-            <tr>
-            <td><Button style={{ padding: 0}} onClick={() => onUpdate(pin.signalId)} variant="link">{pin.signal}</Button></td>
-            <td><Button style={{ padding: 0}} onClick={() => onUpdate(pin.componentId)} variant="link">{pin.component}</Button></td>
+            <tr key={`idx-${pin.index}`}>
+            <td><Link to={`/signal/${pin.signalId}`} variant="link">{pin.signal}</Link></td>
+            <td><Link to={`/component/${pin.componentId}`} variant="link">{pin.component}</Link></td>
             <td>{pin.index}</td>
-            <td><Button style={{ padding: 0}} onClick={() => onUpdate(pin.othrSignalId)} variant="link">{pin.othr_component !== undefined && pin.othr_component}</Button></td>
-            <td><Button style={{ padding: 0}} onClick={() => onUpdate(pin.othrComponentId)} variant="link">{pin.othr_signal !== undefined && pin.othr_signal}</Button></td>
+            <td><Link to={`/signal/${pin.othrSignalId}`} variant="link">{pin.othr_component !== undefined && pin.othr_component}</Link></td>
+            <td><Link to={`/component/${pin.othrComponentId}`} variant="link">{pin.othr_signal !== undefined && pin.othr_signal}</Link></td>
             </tr>
         )}
         </tbody>

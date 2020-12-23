@@ -1,36 +1,58 @@
 
 import React, { useState, useEffect } from 'react';
-import { Tab, Button, Tabs, Form, Row, Col, Table } from 'react-bootstrap'
+import { Tab, Tabs, Form, Row, Col, Table } from 'react-bootstrap'
+import {
+    useParams, Link
+} from "react-router-dom";
 
-function SignalPreview ({ node, models, onUpdate }) {
+function SignalPreview ({ models }) {
     const [key, setKey] = useState('summary');
     const [name, setName] = useState('unnamed');
     const [board, setBoard] = useState(undefined);
     const [pins, setPins] = useState([]);
     const [signals, setSignals] = useState([]);
+    const [status, setStatus] = useState('okayy');
+    
+    let { id } = useParams();
 
+    // listen for changes on the id. If id changes, we shall fetch data from
+    // the model and populate the fields for display
     useEffect(() => {
-        // check model corresponding to node is a board. If so, do these
-        if (node === null) return;
-        if (node.kind !== 'signal') return;
+        if (id === undefined) return;
+        let node = models[id];
+
+        if (node === undefined) {
+            setStatus('node-not-found')
+            return;
+        }
+        if (node.kind !== 'signal') {
+            setStatus('node-not-a-signal')
+            return;
+        }
+
+        setStatus('okayy')
         setName(node.name);
-        setBoard(models.models[node.parent]);
+        setBoard(models[node.parent]);
 
         let newPins = node.pins.map(id => {
-            const pin = models.models[id];
-            const com = models.models[pin.parent];
-            const info = models.models[pin.pininfo];
+            const pin = models[id];
+            const com = models[pin.parent];
+            const info = models[pin.pininfo];
             return { id: com.id, component: com.refdes, name: info.name, number: info.number };
         });
         setPins(newPins);
 
-        let newSignals = models.models[node.net].signals.map(id => {
-            const sig = models.models[id];
-            const brd = models.models[sig.parent];
+        let newSignals = models[node.net].signals.map(id => {
+            const sig = models[id];
+            const brd = models[sig.parent];
             return { boardId: brd.id, board: brd.refdes, signalId: sig.id, signal: sig.name };
         });
         setSignals(newSignals);
-    }, [node, models]);
+    }, [id, models]);
+
+    if (status !== 'okayy') {
+        return <p className="alert alert-danger mt-4">{status}</p>
+    }
 
     return (
         <Tabs activeKey={key} onSelect={(k) => setKey(k)} id="signal-preview">
@@ -45,7 +67,7 @@ function SignalPreview ({ node, models, onUpdate }) {
                 <Form.Group as={Row} controlId="signal-parent">
                     <Form.Label column sm="2">Parent</Form.Label>
                     <Col sm="10">
-                        {board !== undefined && <Button onClick={() => onUpdate(board.id)}>Board {board.refdes}</Button>}
+                        {board !== undefined && <Link className='btn btn-link' to={`/board/${board.id}`}>Board {board.refdes}</Link>}
                     </Col>
                 </Form.Group>
             </Form>
@@ -62,7 +84,7 @@ function SignalPreview ({ node, models, onUpdate }) {
         <tbody>
         {pins.map(pin => 
             <tr>
-            <td><Button style={{padding:0}} variant="link" onClick={() => onUpdate(pin.id)}>{pin.component}</Button></td>
+            <td><Link to={`/component/${pin.id}`}>{pin.component}</Link></td>
             <td>{pin.name}</td>
             <td>{pin.number}</td>
             </tr>
@@ -81,8 +103,8 @@ function SignalPreview ({ node, models, onUpdate }) {
         <tbody>
         {signals.map(sig => 
             <tr>
-            <td><Button style={{padding:0}} variant="link" onClick={() => onUpdate(sig.boardId)}>{sig.board}</Button></td>
-            <td><Button style={{padding:0}} variant="link" onClick={() => { setKey('summary'); onUpdate(sig.signalId)}}>{sig.signal}</Button></td>
+            <td><Link to={`/board/${sig.boardId}`}>{sig.board}</Link></td>
+            <td><Link to={`/signal/${sig.signalId}`} onClick={() => { setKey('summary') }}>{sig.signal}</Link></td>
             </tr>
         )}
         </tbody>
