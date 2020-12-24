@@ -15,6 +15,7 @@ function App() {
         fetch('models.json')
         .then(response => response.json())
         .then(json => { setModels(json.models) })
+        .catch(error => console.log('There was an error', error))
     }, []);
 
     if (models == null) {
